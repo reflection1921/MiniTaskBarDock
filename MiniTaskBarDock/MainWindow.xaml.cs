@@ -27,9 +27,8 @@ namespace MiniTaskBarDock
         {
             InitializeComponent();
 
-            /* SETUP */
-            const string path = "";
-            const int gridWidthIconCount = 7;
+            string path = File.ReadAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
+            int gridWidthIconCount = int.Parse(File.ReadAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "grid.txt")));
 
             this.Topmost = true;
             
