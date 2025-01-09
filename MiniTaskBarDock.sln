@@ -7,14 +7,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniTaskBarDock", "MiniTask
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|x64.ActiveCfg = Debug|x64
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|x64.Build.0 = Debug|x64
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|x86.ActiveCfg = Debug|x86
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Debug|x86.Build.0 = Debug|x86
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|x64.ActiveCfg = Release|x64
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|x64.Build.0 = Release|x64
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|x86.ActiveCfg = Release|x86
+		{EDA2F5A8-8410-431D-A868-A3D01D3FA38A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

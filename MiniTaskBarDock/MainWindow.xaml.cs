@@ -30,7 +30,6 @@ namespace MiniTaskBarDock
             const int gridWidthIconCount = 7;
 
             this.Topmost = true;
-
             
             string[] programPathArr = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
                 .Where(file => file.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))

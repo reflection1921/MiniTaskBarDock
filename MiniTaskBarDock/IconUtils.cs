@@ -5,20 +5,37 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Windows.Win32;
+using Windows.Win32.UI.Shell;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.Controls;
+using Windows.Win32.Foundation;
+using System.IO;
+using Windows.Win32.Storage.FileSystem;
 
 
 namespace MiniTaskBarDock
 {
     internal class IconUtils
     {
+
         public static ImageSource? ExtractIconImage(string filePath)
         {
-            User32.SHFILEINFO shinfo = new User32.SHFILEINFO();
-            IntPtr hImgLarge = User32.SHGetFileInfo(filePath, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), User32.SHGFI_ICON | User32.SHGFI_LARGEICON);
-            if (shinfo.hIcon == IntPtr.Zero)
+            SHFILEINFOW fileInfo = default;
+            SHGFI_FLAGS flags = SHGFI_FLAGS.SHGFI_ICON | SHGFI_FLAGS.SHGFI_LARGEICON;
+
+            unsafe
+            {
+                PInvoke.SHGetFileInfo(filePath, FILE_FLAGS_AND_ATTRIBUTES.FILE_ATTRIBUTE_NORMAL, &fileInfo, (uint)Marshal.SizeOf(typeof(SHFILEINFOW)), flags);
+            }
+
+            if (fileInfo.hIcon == IntPtr.Zero)
                 return null;
 
-            return IconToImageSource(Icon.FromHandle(shinfo.hIcon));
+            if (fileInfo.hIcon == IntPtr.Zero)
+                return null;
+
+            return IconToImageSource(Icon.FromHandle(fileInfo.hIcon));
         }
 
         private static ImageSource IconToImageSource(Icon icon)
