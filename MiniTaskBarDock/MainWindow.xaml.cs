@@ -53,7 +53,7 @@ namespace MiniTaskBarDock
                 if (programPath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
                 {
                     var shortcut = Shortcut.ReadFromFile(programPath);
-                    programPath = shortcut.LinkTargetIDList.Path;
+                    iconPath = programPath = shortcut.LinkTargetIDList.Path;
                     // TODO: Support user selected icon in shortcut
                     //if (!string.IsNullOrEmpty(shortcut.StringData.IconLocation))
                     //{
