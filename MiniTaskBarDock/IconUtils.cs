@@ -32,9 +32,6 @@ namespace MiniTaskBarDock
             if (fileInfo.hIcon == IntPtr.Zero)
                 return null;
 
-            if (fileInfo.hIcon == IntPtr.Zero)
-                return null;
-
             return IconToImageSource(Icon.FromHandle(fileInfo.hIcon));
         }
 

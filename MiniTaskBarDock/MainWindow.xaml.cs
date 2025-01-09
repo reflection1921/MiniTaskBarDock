@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ShellLink;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -46,7 +48,28 @@ namespace MiniTaskBarDock
                     leftOffset = 0;
                 }
                 string programPath = programPathArr[i];
-                ImageSource? icon = IconUtils.ExtractIconImage(programPath);
+
+                string iconPath = programPath;
+
+                if (programPath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
+                {
+                    var shortcut = Shortcut.ReadFromFile(programPath);
+                    programPath = shortcut.LinkTargetIDList.Path;
+                    // TODO: Support user selected icon in shortcut
+                    //if (!string.IsNullOrEmpty(shortcut.StringData.IconLocation))
+                    //{
+                    //    iconPath = shortcut.StringData.IconLocation + ", 0";
+                    //}
+                }
+
+                // TODO: Add folder in the future
+                // Skip Folder
+                if (Directory.Exists(programPath))
+                {
+                    continue;
+                }
+
+                ImageSource? icon = IconUtils.ExtractIconImage(iconPath);
                 if (icon == null)
                 {
                     icon = IconUtils.GetDefaultProgramIcon();
