@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace MiniTaskBarDock
 {
@@ -61,13 +62,6 @@ namespace MiniTaskBarDock
                     //}
                 }
 
-                // TODO: Add folder in the future
-                // Skip Folder
-                if (Directory.Exists(programPath))
-                {
-                    continue;
-                }
-
                 ImageSource? icon = IconUtils.ExtractIconImage(iconPath);
                 if (icon == null)
                 {
@@ -84,13 +78,21 @@ namespace MiniTaskBarDock
                     Margin = new Thickness(leftOffset * 40, 4 + (topOffset * 40), 0, 4),
                     Width = 40,
                     Height = 40,
-                    DataContext = programPath
+                    DataContext = programPath,
+                    ToolTip = Path.GetFileNameWithoutExtension(programPath)
                 };
 
                 btn.Click += (sender, e) =>
                 {
                     string runAppPath = (string)((Button)sender).DataContext;
-                    System.Diagnostics.Process.Start(runAppPath);
+                    if (Directory.Exists(programPath))
+                    {
+                        Process.Start("explorer.exe", runAppPath);
+                    }
+                    else
+                    {
+                        Process.Start(runAppPath);
+                    }
                 };
 
                 leftOffset++;
