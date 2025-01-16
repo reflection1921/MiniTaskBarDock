@@ -29,40 +29,46 @@ namespace MiniTaskBarDock
             InitializeComponent();
 
             string path = File.ReadAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "path.txt"));
-            int gridWidthIconCount = int.Parse(File.ReadAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "grid.txt")));
+            int iconCountPerLine = int.Parse(File.ReadAllText(System.IO.Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "grid.txt")));
 
             this.Topmost = true;
             
-            string[] programPathArr = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+            string[] filesList = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
                 .Where(file => file.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
 
             int topOffset = -1;
             int leftOffset = 0;
 
-            for (int i = 0; i < programPathArr.Length; i++)
+            for (int i = 0; i < filesList.Length; i++)
             {
-                if (i % gridWidthIconCount == 0)
+                if (i % iconCountPerLine == 0)
                 {
                     topOffset++;
                     leftOffset = 0;
                 }
-                string programPath = programPathArr[i];
+                string filePath = filesList[i];
 
-                string iconPath = programPath;
+                string destinationFilePath = filePath;
 
-                if (programPath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
+                ImageSource? icon;
+
+                if (filePath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
                 {
-                    var shortcut = Shortcut.ReadFromFile(programPath);
-                    iconPath = programPath = shortcut.LinkTargetIDList.Path;
-                    // TODO: Support user selected icon in shortcut
-                    //if (!string.IsNullOrEmpty(shortcut.StringData.IconLocation))
-                    //{
-                    //    iconPath = shortcut.StringData.IconLocation + ", 0";
-                    //}
-                }
+                    var shortcut = Shortcut.ReadFromFile(filePath);
+                    destinationFilePath = shortcut.LinkTargetIDList.Path;
 
-                ImageSource? icon = IconUtils.ExtractIconImage(iconPath);
+                    icon = IconUtils.ExtractShortcutIconImage(filePath);
+                    if (icon == null)
+                    {
+                        icon = IconUtils.ExtractIconImage(destinationFilePath);
+                    }
+                }
+                else
+                {
+                    icon = IconUtils.ExtractIconImage(filePath);
+                }
+                
                 if (icon == null)
                 {
                     icon = IconUtils.GetDefaultProgramIcon();
@@ -78,14 +84,14 @@ namespace MiniTaskBarDock
                     Margin = new Thickness(leftOffset * 40, 4 + (topOffset * 40), 0, 4),
                     Width = 40,
                     Height = 40,
-                    DataContext = programPath,
-                    ToolTip = Path.GetFileNameWithoutExtension(programPath)
+                    DataContext = destinationFilePath,
+                    ToolTip = Path.GetFileNameWithoutExtension(filePath)
                 };
 
                 btn.Click += (sender, e) =>
                 {
                     string runAppPath = (string)((Button)sender).DataContext;
-                    if (Directory.Exists(programPath))
+                    if (Directory.Exists(destinationFilePath))
                     {
                         Process.Start("explorer.exe", runAppPath);
                     }
@@ -100,14 +106,14 @@ namespace MiniTaskBarDock
                 MainGrid.Children.Add(btn);
             }
 
-            this.Width = 40 * (programPathArr.Length < gridWidthIconCount ? programPathArr.Length : gridWidthIconCount);
+            this.Width = 40 * (filesList.Length < iconCountPerLine ? filesList.Length : iconCountPerLine);
             this.Height = 40 * (topOffset + 1) + 8;
 
         }
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

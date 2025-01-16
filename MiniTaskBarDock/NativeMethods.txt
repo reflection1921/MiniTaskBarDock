@@ -1,1 +1,7 @@
 ﻿SHGetFileInfo
+IShellLinkW
+ShellLink
+IPersistFile
+GetWindowTextLength
+ExtractIcon
+MAX_PATH

@@ -12,6 +12,11 @@ using Windows.Win32.UI.Controls;
 using Windows.Win32.Foundation;
 using System.IO;
 using Windows.Win32.Storage.FileSystem;
+using Windows.Win32.System.Com;
+using System.Text;
+using System.Reflection.Metadata;
+using System.Reflection;
+using Windows.Win32.UI.Shell.Common;
 
 
 namespace MiniTaskBarDock
@@ -50,6 +55,29 @@ namespace MiniTaskBarDock
                 return null;
 
             return template;
+        }
+
+        public static ImageSource? ExtractShortcutIconImage(string shortcutPath)
+        {
+            Windows.Win32.UI.Shell.ShellLink shellLink = new Windows.Win32.UI.Shell.ShellLink();
+            IShellLinkW? shellLinkW = (IShellLinkW)shellLink;
+
+            ((IPersistFile)shellLink).Load(shortcutPath, STGM.STGM_READ);
+
+            int iconIndex = 0;
+
+            unsafe
+            {
+                fixed (char* iconPathPtr = new char[PInvoke.MAX_PATH])
+                {
+                    shellLinkW.GetIconLocation(iconPathPtr, (int)PInvoke.MAX_PATH, out iconIndex);
+                    var icon = PInvoke.ExtractIcon(HINSTANCE.Null, iconPathPtr, (uint)iconIndex);
+                    if (icon == IntPtr.Zero)
+                        return null;
+
+                    return IconToImageSource(Icon.FromHandle(icon));
+                }
+            }
         }
     }
 }
