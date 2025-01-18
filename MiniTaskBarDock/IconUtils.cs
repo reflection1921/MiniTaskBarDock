@@ -56,9 +56,10 @@ namespace MiniTaskBarDock
             return template;
         }
 
+        //TODO: Use Marshal
         public static ImageSource? ExtractShortcutIconImage(string shortcutPath)
         {
-            Windows.Win32.UI.Shell.ShellLink shellLink = new Windows.Win32.UI.Shell.ShellLink();
+            ShellLink shellLink = new ShellLink();
             IShellLinkW? shellLinkW = (IShellLinkW)shellLink;
 
             ((IPersistFile)shellLink).Load(shortcutPath, STGM.STGM_READ);
@@ -79,6 +80,7 @@ namespace MiniTaskBarDock
             }
         }
 
+        //TODO: Use Marshal
         public static string GetDestinationPathFromShortcut(string shortcutPath)
         {
             Windows.Win32.UI.Shell.ShellLink shellLink = new Windows.Win32.UI.Shell.ShellLink();
