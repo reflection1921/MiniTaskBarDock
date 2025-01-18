@@ -23,7 +23,6 @@ namespace MiniTaskBarDock
 {
     internal class IconUtils
     {
-
         public static ImageSource? ExtractIconImage(string filePath)
         {
             SHFILEINFOW fileInfo = default;
@@ -78,6 +77,27 @@ namespace MiniTaskBarDock
                     return IconToImageSource(Icon.FromHandle(icon));
                 }
             }
+        }
+
+        public static string GetDestinationPathFromShortcut(string shortcutPath)
+        {
+            Windows.Win32.UI.Shell.ShellLink shellLink = new Windows.Win32.UI.Shell.ShellLink();
+            IShellLinkW? shellLinkW = (IShellLinkW)shellLink;
+
+            ((IPersistFile)shellLink).Load(shortcutPath, STGM.STGM_READ);
+
+            int iconIndex = 0;
+
+            unsafe
+            {
+                fixed (char* iconPathPtr = new char[PInvoke.MAX_PATH])
+                {
+                    shellLinkW.GetPath(iconPathPtr, (int)PInvoke.MAX_PATH, null, 0);
+
+                    return new string(iconPathPtr);
+                }
+            }
+
         }
     }
 }

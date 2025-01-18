@@ -55,8 +55,7 @@ namespace MiniTaskBarDock
 
                 if (filePath.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
                 {
-                    var shortcut = Shortcut.ReadFromFile(filePath);
-                    destinationFilePath = shortcut.LinkTargetIDList.Path;
+                    destinationFilePath = IconUtils.GetDestinationPathFromShortcut(filePath);
 
                     icon = IconUtils.ExtractShortcutIconImage(filePath);
                     if (icon == null)
