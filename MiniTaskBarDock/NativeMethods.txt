@@ -5,3 +5,7 @@ IPersistFile
 GetWindowTextLength
 ExtractIcon
 MAX_PATH
+GetMonitorInfo
+EnumDisplayMonitors
+GetCursorPos
+MonitorFromPoint

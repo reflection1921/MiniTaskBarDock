@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.Win32.Graphics.Gdi;
 using Microsoft.Win32;
 using Path = System.IO.Path;
 
@@ -25,11 +26,13 @@ namespace MiniTaskBarDock
     public partial class MainWindow : Window
     {
         private Configuration _config;
+        private List<MONITORINFO> _monitors;
         public MainWindow()
         {
             InitializeComponent();
 
             _config = new Configuration("config.json");
+            _monitors = ScreenUtils.GetAllMonitors();
 
             if (_config.Data.DockDataPath == null)
             {
@@ -42,6 +45,8 @@ namespace MiniTaskBarDock
             Topmost = true;
 
             CreateIconGrid();
+
+            this.Loaded += (s, e) => PositionWindow(_config.Data.MonitorIndex);
         }
 
         private bool SetDockDataPath()
@@ -149,6 +154,19 @@ namespace MiniTaskBarDock
         private void Window_Deactivated(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void PositionWindow(int index)
+        {
+            if (index < 0 || index >= _monitors.Count)
+            {
+                index = 0;
+            }
+
+            this.Left = _monitors[index].rcWork.left + (_monitors[index].rcWork.right - _monitors[index].rcWork.left - this.Width) / 2; //width: Center
+            this.Top = _monitors[index].rcWork.Height - Height; //height: above taskbar
+
+            this.WindowStartupLocation = WindowStartupLocation.Manual;
         }
     }
 }

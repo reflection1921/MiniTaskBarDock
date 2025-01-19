@@ -13,6 +13,7 @@ namespace MiniTaskBarDock
         public string? DockDataPath { get; set; }
         public int IconCountPerLine { get; set; } = 9;
         public int IconSize { get; set; } = 40;
+        public int MonitorIndex { get; set; } = 0;
     }
     internal class Configuration
     {

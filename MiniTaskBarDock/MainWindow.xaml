@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="48" Width="146" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Deactivated="Window_Deactivated">
 
-    <Border CornerRadius="5" Background="#A02C2C2C">
+    <Border CornerRadius="5" Background="#FF2C2C2C">
         <Grid x:Name="MainGrid">
 
         </Grid>
