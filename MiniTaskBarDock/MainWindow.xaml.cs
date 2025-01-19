@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Microsoft.Win32;
 using Path = System.IO.Path;
@@ -158,13 +159,29 @@ namespace MiniTaskBarDock
 
         private void PositionWindow(int index)
         {
-            if (index < 0 || index >= _monitors.Count)
+            RECT GetMonitorWorkingArea()
             {
-                index = 0;
-            }
+                if (index == -1)
+                {
+                    MONITORINFO? monitor = ScreenUtils.GetActiveMonitor();
+                    if (monitor != null)
+                    {
+                        return monitor.Value.rcWork;
+                    }
+                }
 
-            this.Left = _monitors[index].rcWork.left + (_monitors[index].rcWork.right - _monitors[index].rcWork.left - this.Width) / 2; //width: Center
-            this.Top = _monitors[index].rcWork.Height - Height; //height: above taskbar
+                if (index < 0 || index >= _monitors.Count)
+                {
+                    index = 0;
+                }
+
+                return _monitors[index].rcWork;
+            }
+            
+            var monitor = GetMonitorWorkingArea();
+
+            this.Left = monitor.left + (monitor.right - monitor.left - this.Width) / 2; //width: Center
+            this.Top = monitor.Height - Height; //height: above taskbar
 
             this.WindowStartupLocation = WindowStartupLocation.Manual;
         }

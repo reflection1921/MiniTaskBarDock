@@ -42,6 +42,23 @@ namespace MiniTaskBarDock
             return monitors;
         }
 
-        
+        public static unsafe MONITORINFO? GetActiveMonitor()
+        {
+            if (!PInvoke.GetCursorPos(out var cursorPos))
+            {
+                return null;
+            }
+
+            HMONITOR monitor = PInvoke.MonitorFromPoint(cursorPos, MONITOR_FROM_FLAGS.MONITOR_DEFAULTTONEAREST);
+            var monitorInfo = new MONITORINFO { cbSize = (uint)sizeof(MONITORINFO) };
+
+            if (PInvoke.GetMonitorInfo(monitor, ref monitorInfo))
+            {
+
+                return monitorInfo;
+            }
+
+            return null;
+        }
     }
 }
