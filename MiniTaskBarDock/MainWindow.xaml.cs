@@ -28,6 +28,7 @@ namespace MiniTaskBarDock
     {
         private Configuration _config;
         private List<MONITORINFO> _monitors;
+        private bool _changePath = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -52,14 +53,19 @@ namespace MiniTaskBarDock
 
         private bool SetDockDataPath()
         {
+            _changePath = true;
             OpenFolderDialog dialog = new OpenFolderDialog();
             if (dialog.ShowDialog() == true)
             {
                 _config.Data.DockDataPath = dialog.FolderName;
                 _config.Save();
 
+                _changePath = false;
+
                 return true;
             }
+
+            _changePath = false;
 
             return false;
         }
@@ -129,7 +135,8 @@ namespace MiniTaskBarDock
                 Width = iconSize,
                 Height = iconSize,
                 DataContext = destinationFilePath,
-                ToolTip = Path.GetFileNameWithoutExtension(destinationFilePath)
+                ToolTip = Path.GetFileNameWithoutExtension(destinationFilePath),
+                ContextMenu = CreateContextMenu()
             };
 
             btn.Click += (sender, _) =>
@@ -154,7 +161,11 @@ namespace MiniTaskBarDock
 
         private void Window_Deactivated(object sender, EventArgs e)
         {
-            Close();
+            if (!_changePath)
+            {
+                Close();
+            }
+            
         }
 
         private void PositionWindow(int index)
@@ -184,6 +195,80 @@ namespace MiniTaskBarDock
             this.Top = monitor.Height - Height; //height: above taskbar
 
             this.WindowStartupLocation = WindowStartupLocation.Manual;
+        }
+
+        private ContextMenu CreateContextMenu()
+        {
+            ContextMenu contextMenu = new ContextMenu();
+            #region Open Dock Path
+            MenuItem openDockPathMenu = new MenuItem
+            {
+                Header = "Open Dock Path"
+            };
+
+            openDockPathMenu.Click += (s, e) =>
+            {
+                if (_config.Data.DockDataPath != null)
+                    Process.Start("explorer.exe", _config.Data.DockDataPath);
+            };
+            #endregion
+
+            MenuItem changeDockPathMenu = new MenuItem
+            {
+                Header = "Change Dock Path"
+            };
+
+            changeDockPathMenu.Click += (s, e) =>
+            {
+                if (SetDockDataPath())
+                {
+                    MainGrid.Children.Clear();
+                    CreateIconGrid();
+                }
+            };
+
+            #region Monitor Settings
+            MenuItem selMoniterMenu = new MenuItem
+            {
+                Header = "Monitor to Display",
+            };
+
+            MenuItem[] monitorsMenu = new MenuItem[_monitors.Count + 1];
+            for (int i = 0; i < _monitors.Count + 1; i++)
+            {
+                monitorsMenu[i] = new MenuItem
+                {
+                    Header = (i == 0)? "Automatic" : $"Monitor {i}"
+                };
+                if (_config.Data.MonitorIndex == i)
+                    monitorsMenu[i].IsChecked = true;
+                selMoniterMenu.Items.Add(monitorsMenu[i]);
+                int monitorIndex = i;
+                monitorsMenu[i].Click += (s, e) =>
+                {
+                    for (int j = 0; j < _monitors.Count + 1; j++)
+                    {
+                        monitorsMenu[j].IsChecked = (j == monitorIndex);
+                    }
+                    _config.Data.MonitorIndex = monitorIndex;
+                    _config.Save();
+                };
+            }
+            #endregion
+
+            MenuItem optionsMenu = new MenuItem
+            {
+                Header = "Options"
+            };
+
+            optionsMenu.Items.Add(openDockPathMenu);
+            optionsMenu.Items.Add(new Separator());
+            optionsMenu.Items.Add(changeDockPathMenu);
+            optionsMenu.Items.Add(selMoniterMenu);
+
+            contextMenu.Items.Add(optionsMenu);
+
+            return contextMenu;
         }
     }
 }
