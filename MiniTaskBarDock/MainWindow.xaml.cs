@@ -18,6 +18,7 @@ using Windows.Win32.Foundation;
 using Windows.Win32.Graphics.Gdi;
 using Microsoft.Win32;
 using Path = System.IO.Path;
+using System.Windows.Media.Animation;
 
 namespace MiniTaskBarDock
 {
@@ -192,7 +193,19 @@ namespace MiniTaskBarDock
             var monitor = GetMonitorWorkingArea();
 
             this.Left = monitor.left + (monitor.right - monitor.left - this.Width) / 2; //width: Center
-            this.Top = monitor.Height - Height; //height: above taskbar
+            //this.Top = monitor.Height - Height; //height: above taskbar
+
+            this.Top = monitor.Height;
+
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = monitor.Height,
+                To = monitor.Height - Height,
+                Duration = TimeSpan.FromSeconds(0.5),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            this.BeginAnimation(Window.TopProperty, animation);
 
             this.WindowStartupLocation = WindowStartupLocation.Manual;
         }
